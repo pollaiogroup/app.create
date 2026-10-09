@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CREATE — V2 Functional Prototype</title>
+<style>
+:root{--bg:#f4f4f1;--card:#fff;--ink:#121212;--muted:#73736e;--line:#e3e3de;--orange:#ff5a1f;--soft:#fff0e8;--green:#159b60;--red:#d74747;--shadow:0 8px 28px #0000000a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:flex}.side{position:fixed;left:0;top:0;bottom:0;width:245px;background:#111;color:#fff;padding:22px 15px;z-index:5}.brand{font-weight:950;font-size:28px;letter-spacing:-2px;padding:0 10px 28px}.brand em{color:var(--orange);font-style:normal}.nav{display:grid;gap:4px}.nav button{background:none;border:0;color:#999;text-align:left;padding:12px 13px;border-radius:10px}.nav button:hover,.nav button.active{background:#252525;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--orange)}.sidefoot{position:absolute;bottom:18px;left:25px;color:#666;font-size:10px}
+main{margin-left:245px;width:calc(100% - 245px);padding:30px 34px 70px}.view{display:none}.view.active{display:block}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:25px}h1{font-size:34px;letter-spacing:-1.7px;margin:0 0 5px}h2{margin:0 0 6px;font-size:21px}h3{margin:0 0 6px;font-size:16px}.sub{color:var(--muted)}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;border:1px solid #cfcfc8;background:#ffffff;color:#121212 !important;border-radius:10px;padding:10px 14px;font-weight:800;line-height:1.15;white-space:nowrap;cursor:pointer;text-decoration:none;appearance:none;-webkit-appearance:none}.btn.primary{background:#121212;color:#ffffff !important;border-color:#121212}.btn.orange{background:#ff5a1f;color:#ffffff !important;border-color:#ff5a1f}.btn.danger{color:#b3261e !important;background:#ffffff;border-color:#d8c9c6}.btn.small{min-height:38px;padding:8px 12px;font-size:13px;letter-spacing:-.1px}.btn:hover{filter:brightness(.96);transform:translateY(-1px)}.btn:active{transform:translateY(0)}.btn:focus-visible{outline:3px solid #ff5a1f;outline-offset:2px}.actions .btn{min-width:92px}.charbody .actions .btn{min-width:96px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:var(--shadow)}.metric{font-size:30px;font-weight:900;margin-top:7px}.label{font-size:11px;color:var(--muted)}.section{margin-top:27px}.sectionhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}.link{border:0;background:transparent;color:#c64612 !important;font-weight:850;padding:6px 4px;cursor:pointer}.link:hover{text-decoration:underline}
+.project{min-height:180px;display:flex;flex-direction:column;justify-content:space-between}.projecthead{display:flex;justify-content:space-between}.badge{font-size:10px;font-weight:900;border-radius:99px;padding:5px 8px;background:#fff0e8;color:#9f3d16}.bar{height:7px;background:#e3e3de;border-radius:99px;overflow:hidden;margin-top:14px}.bar i{display:block;height:100%;background:var(--orange);border-radius:99px}.meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.rows{display:grid;gap:8px}.row{background:#ffffff;color:#121212;border:1px solid var(--line);border-radius:11px;padding:12px;display:grid;grid-template-columns:1.8fr 1fr 120px auto;gap:10px;align-items:center}.status{font-size:10px;font-weight:900}.green{color:#087443}.orangeText{color:#b83d0e}.red{color:#b3261e}.yellow{color:#765800}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.search{min-width:270px;border:1px solid #cfcfc8;border-radius:10px;padding:10px 12px;background:#ffffff;color:#121212}.search::placeholder{color:#73736e}.chip{background:#ffffff;color:#121212;border:1px solid #cfcfc8;border-radius:99px;padding:8px 11px;font-weight:700;cursor:pointer}.chip:hover{border-color:#999;background:#fafaf8}.chip:focus-visible{outline:3px solid #ff5a1f;outline-offset:2px}
+.char{padding:0;overflow:hidden}.avatar{height:145px;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,#eee,#fff0e8);overflow:hidden}.avatar img{width:100%;height:100%;object-fit:contain}.charrefs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.charref{height:64px;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fafaf8;display:grid;place-items:center;color:#73736e;font-size:10px;text-align:center}.charref img{width:100%;height:100%;object-fit:cover}.charref span{padding:4px}.refcount{font-size:10px;color:#73736e;margin-top:8px}.charbody{padding:14px}.lock{color:#087443;font-size:10px;font-weight:900;margin-top:8px}
+.list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:10px;padding:11px;background:#ffffff;color:#121212}.item strong{display:block;color:#121212}.item small{color:#5f5f5a;line-height:1.4}
+.packagegrid{display:grid;grid-template-columns:380px 1fr;gap:14px}.output{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:12px 0}.output:last-child{border:0}.dot{width:9px;height:9px;border-radius:50%;background:#aaa;display:inline-block;margin-right:7px}.done .dot{background:var(--green)}.doing .dot{background:var(--orange)}
+.form{display:grid;gap:12px}.form label{font-weight:750;color:#121212}.form input,.form textarea,.form select{display:block;width:100%;margin-top:6px;border:1px solid #cfcfc8;border-radius:9px;padding:11px;background:#ffffff;color:#121212 !important;caret-color:#121212;outline:none}.form input::placeholder,.form textarea::placeholder{color:#73736e}.form input:focus,.form textarea:focus,.form select:focus,.search:focus{border-color:#ff5a1f;box-shadow:0 0 0 3px #ff5a1f22}.form select{cursor:pointer;appearance:auto;-webkit-appearance:auto}.form select option{background:#ffffff !important;color:#121212 !important}.form input[type=file]{padding:8px;color:#121212 !important;background:#ffffff}.form input[type=file]::file-selector-button{background:#121212;color:#ffffff;border:0;border-radius:7px;padding:8px 11px;font-weight:800;margin-right:8px;cursor:pointer}.form input[type=file]::file-selector-button:hover{background:#252525}.help{font-size:11px;color:#5f5f5a;line-height:1.45}.uploadgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.uploadbox{border:1px dashed #cfcfc8;border-radius:11px;padding:10px;background:#fafaf8;color:#121212}.uploadbox label{font-size:12px;color:#121212}.previewgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.preview{height:82px;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#ffffff;position:relative}.preview img{width:100%;height:100%;object-fit:cover}.preview small{position:absolute;left:4px;bottom:4px;background:#121212;color:#ffffff;border-radius:5px;padding:2px 4px;font-size:9px}.projectfilter{min-width:220px}.form textarea{min-height:90px;resize:vertical}
+.empty{padding:30px;text-align:center;color:#5f5f5a;border:1px dashed #bbb;border-radius:13px}.actions{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:8px;margin-top:15px}.charbody .actions,.project .actions{min-height:38px}.modal{position:fixed;inset:0;background:#111c;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.open{display:flex}.modalbox{width:min(650px,100%);max-height:90vh;overflow:auto;background:#ffffff;color:#121212;border-radius:17px;padding:22px;box-shadow:0 20px 70px #0005}.modalbox h2{margin-top:0;color:#121212}.toast{position:fixed;right:20px;bottom:20px;background:#121212;color:#ffffff;padding:12px 15px;border-radius:10px;display:none;z-index:30;box-shadow:var(--shadow)}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.step{border:1px solid var(--line);background:#fafaf8;color:#121212;border-radius:10px;padding:10px}.step b{display:block;font-size:12px}.step small{color:#5f5f5a}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed #ccc;border-radius:13px}.actions{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:8px;margin-top:15px}.charbody .actions,.project .actions{min-height:38px}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.open{display:flex}.modalbox{width:min(650px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:17px;padding:22px}.modalbox h2{margin-top:0}.toast{position:fixed;right:20px;bottom:20px;background:#111;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:30;box-shadow:var(--shadow)}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.step{border:1px solid var(--line);background:#fafaf8;border-radius:10px;padding:10px}.step b{display:block;font-size:12px}.step small{color:var(--muted)}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.grid3,.grid2,.packagegrid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.timeline{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.uploadgrid,.previewgrid{grid-template-columns:1fr 1fr}.search{min-width:0;width:100%}.projectfilter{min-width:0;width:100%}.side{width:68px}.brand{font-size:0}.brand em{font-size:24px}.nav button{font-size:0;text-align:center}.nav button:after{content:"•";font-size:22px}.sidefoot{display:none}main{margin-left:68px;width:calc(100% - 68px);padding:20px}.grid,.grid3{grid-template-columns:1fr}.top{flex-direction:column}}
+</style>
+<style id="contrast-safety">
+input,textarea,select{color:#121212;background:#fff}
+input::placeholder,textarea::placeholder{color:#73736e;opacity:1}
+select option{color:#121212;background:#fff}
+button{color:#121212}
+.nav button{color:#bdbdbd}
+.nav button:hover,.nav button.active{color:#fff}
+</style></head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">CREA<em>TE</em></div>
+  <nav class="nav">
+    <button class="active" data-view="dashboard">Dashboard</button>
+    <button data-view="universes">Universos</button>
+    <button data-view="characters">Personagens</button>
+    <button data-view="knowledge">Memória & Conhecimento</button>
+    <button data-view="production">Produção</button>
+    <button data-view="products">Produtos</button>
+    <button data-view="analytics">Analytics</button>
+    <button data-view="settings">Configurações</button>
+  </nav>
+  <div class="sidefoot">CREATE • V2<br>FUNCTIONAL PROTOTYPE</div>
+</aside>
+<main>
+<section id="dashboard" class="view active">
+  <div class="top"><div><h1>Olá, Larissa.</h1><div class="sub">A fábrica de IP está pronta para criar.</div></div><button class="btn orange" onclick="openPauta()">+ Nova pauta</button></div>
+  <div class="grid">
+    <div class="card"><div class="label">Universos ativos</div><div class="metric" id="mUniverses">0</div></div>
+    <div class="card"><div class="label">Pacotes em produção</div><div class="metric" id="mPackages">0</div></div>
+    <div class="card"><div class="label">Ativos gerados</div><div class="metric" id="mAssets">0</div></div>
+    <div class="card"><div class="label">Aguardando aprovação</div><div class="metric" id="mApproval">0</div></div>
+  </div>
+  <div class="section"><div class="sectionhead"><h2>Universos</h2><button class="link" onclick="go('universes')">Ver todos →</button></div><div class="grid3" id="dashUniverses"></div></div>
+  <div class="section"><div class="sectionhead"><h2>Fila de produção</h2><button class="link" onclick="go('production')">Abrir produção →</button></div><div class="rows" id="dashQueue"></div></div>
+</section>
+
+<section id="universes" class="view">
+ <div class="top"><div><h1>Universos</h1><div class="sub">DNA, regras, memória e produção de cada IP.</div></div><button class="btn orange" onclick="openUniverse()">+ Novo universo</button></div>
+ <div class="grid3" id="universeList"></div>
+</section>
+
+<section id="characters" class="view">
+ <div class="top"><div><h1>Personagens</h1><div class="sub">Referências oficiais protegidas contra drift.</div></div><button class="btn orange" onclick="openCharacter()">+ Personagem</button></div>
+ <div class="grid3" id="characterList"></div>
+</section>
+
+<section id="knowledge" class="view">
+ <div class="top"><div><h1>Memória & Conhecimento</h1><div class="sub">Cada referência pertence a um único projeto. Nada de misturar universos.</div></div><button class="btn orange" onclick="openKnowledge()">+ Conhecimento</button></div>
+ <div class="toolbar"><input class="search" id="knowledgeSearch" placeholder="Pesquisar..." oninput="renderKnowledge()"><select class="search projectfilter" id="knowledgeProject" onchange="renderKnowledge()"></select><button class="chip" onclick="setKnowledgeType('Todos')">Todos</button><button class="chip" onclick="setKnowledgeType('BNCC')">BNCC</button><button class="chip" onclick="setKnowledgeType('Visual')">Visual</button><button class="chip" onclick="setKnowledgeType('Lore')">Lore</button></div>
+ <div class="grid2"><div class="card"><div class="sectionhead"><h3>Biblioteca</h3><span class="label" id="knowledgeCount"></span></div><div class="list" id="knowledgeList"></div></div><div class="card"><h3>Regra do CREATE</h3><p class="sub" style="line-height:1.65">Conteúdo só pode ser gerado usando conhecimento compatível com o escopo do universo, versão e status de aprovação.</p><div class="item"><strong>Uso automático</strong><small>Ativo para fontes aprovadas</small></div><div class="item" style="margin-top:8px"><strong>Versionamento</strong><small>Alterações preservam histórico</small></div></div></div>
+</section>
+
+<section id="production" class="view">
+ <div class="top"><div><h1>Produção</h1><div class="sub">A unidade fundamental é o pacote de conteúdo.</div></div><button class="btn orange" onclick="openPauta()">+ Nova pauta</button></div>
+ <div id="packageList"></div>
+</section>
+
+<section id="products" class="view">
+ <div class="top"><div><h1>Produtos</h1><div class="sub">Produtos digitais e físicos conectados aos pacotes.</div></div><button class="btn orange" onclick="openProduct()">+ Produto</button></div>
+ <div class="grid3" id="productList"></div>
+</section>
+
+<section id="analytics" class="view">
+ <div class="top"><div><h1>Analytics</h1><div class="sub">Performance da máquina de criação.</div></div></div>
+ <div class="grid">
+  <div class="card"><div class="label">Pacotes concluídos</div><div class="metric" id="aDone">0</div></div>
+  <div class="card"><div class="label">Outputs aprovados</div><div class="metric" id="aApproved">0</div></div>
+  <div class="card"><div class="label">Produtos vinculados</div><div class="metric" id="aProducts">0</div></div>
+  <div class="card"><div class="label">Taxa de aprovação</div><div class="metric" id="aRate">0%</div></div>
+ </div>
+ <div class="section grid2"><div class="card"><h3>Motor de recomendação</h3><div class="list"><div class="item"><strong>Próxima pauta</strong><small>Priorizar temas que ampliem personagens e produtos já existentes.</small></div><div class="item"><strong>Reaproveitamento</strong><small>Gerar derivados antes de iniciar uma nova pauta.</small></div><div class="item"><strong>Expansão</strong><small>Transformar conteúdos aprovados em produtos físicos quando houver oportunidade.</small></div></div></div><div class="card"><h3>Princípio</h3><p style="font-size:24px;font-weight:900;letter-spacing:-1px">1 ideia → vários ativos → vários produtos.</p></div></div>
+</section>
+
+<section id="settings" class="view">
+ <div class="top"><div><h1>Configurações</h1><div class="sub">Regras globais da plataforma.</div></div></div>
+ <div class="card" style="max-width:720px"><div class="form"><label>Nome<input id="settingName" value="CREATE"></label><label>Regra global<textarea id="settingRule">Preservar identidade, personagens, conhecimento autorizado e referências aprovadas.</textarea></label><label>Validação antes de publicar<select><option>Obrigatória</option><option>Manual</option></select></label><button class="btn primary" onclick="saveSettings()">Salvar</button></div></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle"></h2><div id="modalBody"></div></div></div><div class="toast" id="toast"></div>
+
+<script>
+const KEY="create_v2_state";
+const initial={
+ universes:[
+  {id:"u1",name:"Astronautinha",icon:"🚀",desc:"IP infantil • educação + entretenimento",progress:72},
+  {id:"u2",name:"Vovó Kaya",icon:"🌿",desc:"IP infantil • histórias + música",progress:38},
+  {id:"u3",name:"Grioty",icon:"🎓",desc:"Educação • creators • comunidade",progress:21},
+  {id:"u4",name:"N33D",icon:"🧩",desc:"Produtos físicos • 3D • fabricação",progress:14}
+ ],
+ characters:[
+  {id:"c1",name:"Cometa",universe:"Astronautinha",icon:"🐶",desc:"Cachorro • personagem oficial",locked:true},
+  {id:"c2",name:"Astronautinha Eloá",universe:"Astronautinha",icon:"👧🏽",desc:"Cabelo castanho cacheado • roupa rosa",locked:true},
+  {id:"c3",name:"Astronautinha Thiago",universe:"Astronautinha",icon:"👦🏼",desc:"Cabelo loiro • roupa azul",locked:true},
+  {id:"c4",name:"Astronautinha Nina",universe:"Astronautinha",icon:"👧🏻",desc:"Dois rabos de cavalo • roupa roxa",locked:true}
+ ],
+ knowledge:[
+  {id:"k1",title:"BNCC • Educação Infantil",type:"BNCC",source:"Fonte oficial",universe:"Global",approved:true},
+  {id:"k2",title:"Bíblia do Universo • Astronautinha",type:"Lore",source:"Documento interno",universe:"Astronautinha",approved:true},
+  {id:"k3",title:"Guia visual dos personagens",type:"Visual",source:"Referências oficiais",universe:"Astronautinha",approved:true},
+  {id:"k4",title:"Manual editorial",type:"Editorial",source:"Padrão CREATE",universe:"Global",approved:true}
+ ],
+ packages:[],
+ products:[]
+};
+let state=JSON.parse(localStorage.getItem(KEY)||"null")||initial;
+state.characters=(state.characters||[]).map(c=>({...c,refs:c.refs||{},personality:c.personality||"",voice:c.voice||"",rules:c.rules||""}));
+state.knowledge=(state.knowledge||[]).map(k=>({...k,project:k.project||((k.universe&&k.universe!=="Global")?k.universe:"Padrão CREATE"),universe:k.universe||k.project||"Padrão CREATE"}));
+let knowledgeTypeFilter="Todos";
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function uid(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function go(id){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===id));renderAll();scrollTo(0,0)}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.view));
+function toast(msg){let t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",2300)}
+function openModal(title,body){document.getElementById("modalTitle").textContent=title;document.getElementById("modalBody").innerHTML=body;document.getElementById("modal").classList.add("open")}
+function closeModal(){document.getElementById("modal").classList.remove("open")}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+
+function openUniverse(editId=null){
+ const u=state.universes.find(x=>x.id===editId);
+ openModal(editId?"Editar universo":"Novo universo",`<div class="form">
+ <label>Nome<input id="fName" value="${esc(u?.name||"")}"></label>
+ <label>Ícone<input id="fIcon" value="${esc(u?.icon||"✨")}"></label>
+ <label>Descrição<textarea id="fDesc">${esc(u?.desc||"")}</textarea></label>
+ <div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn orange" onclick="saveUniverse('${editId||""}')">Salvar</button></div></div>`);
+}
+function saveUniverse(id){let name=document.getElementById("fName").value.trim();if(!name)return toast("Digite um nome.");let obj={id:id||uid("u"),name,icon:document.getElementById("fIcon").value||"✨",desc:document.getElementById("fDesc").value.trim()||"Novo universo",progress:id?(state.universes.find(x=>x.id===id)?.progress||0):0};if(id)state.universes=state.universes.map(x=>x.id===id?obj:x);else state.universes.push(obj);closeModal();save();toast(id?"Universo atualizado":"Universo criado")}
+function deleteUniverse(id){let u=state.universes.find(x=>x.id===id);if(!confirm(`Arquivar "${u.name}"?`))return;state.universes=state.universes.filter(x=>x.id!==id);save();toast("Universo arquivado")}
+
+function openCharacter(editId=null){
+ const c=editId?state.characters.find(x=>x.id===editId):null;
+ const refs=c?.refs||{};
+ const options=state.universes.map(u=>`<option ${c?.universe===u.name?"selected":""}>${esc(u.name)}</option>`).join("");
+ openModal(c?"Editar personagem":"Novo personagem",`<div class="form">
+ <label>Nome<input id="cName" value="${esc(c?.name||"")}"></label>
+ <label>Projeto / Universo<select id="cUni">${options}</select></label>
+ <label>Descrição<textarea id="cDesc">${esc(c?.desc||"")}</textarea></label>
+ <label>Personalidade / comportamento<textarea id="cPersonality" placeholder="Como esse personagem age, fala e reage?">${esc(c?.personality||"")}</textarea></label>
+ <label>Voz / linguagem<textarea id="cVoice" placeholder="Vocabulário, tom, expressões e limites.">${esc(c?.voice||"")}</textarea></label>
+ <label>Regras invioláveis<textarea id="cRules" placeholder="O que a IA nunca pode alterar nesse personagem?">${esc(c?.rules||"")}</textarea></label>
+ <div><strong>Referências oficiais</strong><div class="help">Suba as imagens que o CREATE deve usar como referência. Elas ficam vinculadas exclusivamente a este personagem e ao projeto dele.</div></div>
+ <div class="uploadgrid">
+  ${["frente","perfil","costas","corpo_inteiro","expressoes","poses","roupa_detalhes","outra"].map(key=>`<div class="uploadbox"><label>${key.replace("_"," ").replace(/\b\w/g,m=>m.toUpperCase())}<input type="file" accept="image/*" onchange="handleCharacterImage(event,'${key}')"></label></div>`).join("")}
+ </div>
+ <div id="charPreview" class="previewgrid"></div>
+ <div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn orange" onclick="saveCharacter('${editId||""}')">${c?"Salvar alterações":"Criar personagem"}</button></div>
+ </div>`);
+ window.pendingCharacterRefs={...refs};
+ renderCharacterPreviews(window.pendingCharacterRefs);
+}
+function handleCharacterImage(event,key){
+ const file=event.target.files?.[0]; if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>resizeImage(reader.result,900,900,data=>{
+   window.pendingCharacterRefs=window.pendingCharacterRefs||{};
+   window.pendingCharacterRefs[key]=data;
+   renderCharacterPreviews(window.pendingCharacterRefs);
+ });
+ reader.readAsDataURL(file);
+}
+function resizeImage(src,maxW,maxH,done){
+ const img=new Image(); img.onload=()=>{
+  const ratio=Math.min(maxW/img.width,maxH/img.height,1),w=Math.round(img.width*ratio),h=Math.round(img.height*ratio);
+  const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;canvas.getContext("2d").drawImage(img,0,0,w,h);
+  done(canvas.toDataURL("image/jpeg",.82));
+ };img.src=src;
+}
+function renderCharacterPreviews(refs={}){
+ const el=document.getElementById("charPreview"); if(!el)return;
+ const labels={frente:"Frente",perfil:"Perfil",costas:"Costas",corpo_inteiro:"Corpo inteiro",expressoes:"Expressões",poses:"Poses",roupa_detalhes:"Roupa/detalhes",outra:"Outra"};
+ el.innerHTML=Object.entries(labels).map(([k,label])=>refs[k]?`<div class="preview"><img src="${refs[k]}"><small>${label}</small></div>`:"").join("")||'<div class="help">Nenhuma referência enviada ainda.</div>';
+}
+function saveCharacter(id){
+ const name=document.getElementById("cName").value.trim(); if(!name)return toast("Digite o nome.");
+ const old=id?state.characters.find(x=>x.id===id):null;
+ const refs={...(old?.refs||{}),...(window.pendingCharacterRefs||{})};
+ const obj={id:id||uid("c"),name,universe:document.getElementById("cUni").value,icon:old?.icon||"🧑",desc:document.getElementById("cDesc").value.trim(),personality:document.getElementById("cPersonality").value.trim(),voice:document.getElementById("cVoice").value.trim(),rules:document.getElementById("cRules").value.trim(),refs,locked:old?.locked||false};
+ if(id)state.characters=state.characters.map(x=>x.id===id?obj:x);else state.characters.push(obj);
+ window.pendingCharacterRefs={};closeModal();save();toast(id?"Personagem atualizado":"Personagem criado");
+}
+function toggleLock(id){let c=state.characters.find(x=>x.id===id);c.locked=!c.locked;save();toast(c.locked?"Referência bloqueada":"Referência desbloqueada")}
+
+function openKnowledge(editId=null){
+ const k=editId?state.knowledge.find(x=>x.id===editId):null;
+ const projectOptions=state.universes.map(u=>`<option ${k?.project===u.name?"selected":""}>${esc(u.name)}</option>`).join("");
+ openModal(k?"Editar memória / conhecimento":"Adicionar memória / conhecimento",`<div class="form">
+ <label>Título<input id="kTitle" value="${esc(k?.title||"")}"></label>
+ <label>Projeto / Universo <select id="kUni">${projectOptions}</select></label>
+ <div class="help">Obrigatório: cada documento, memória ou referência pertence a um único projeto. O CREATE não deve usar conhecimento de outro universo.</div>
+ <label>Tipo<select id="kType">${["BNCC","Lore","Visual","Editorial","Produto","Outro"].map(x=>`<option ${k?.type===x?"selected":""}>${x}</option>`).join("")}</select></label>
+ <label>Fonte<input id="kSource" value="${esc(k?.source||"")}" placeholder="Ex.: PDF oficial, manual interno..."></label>
+ <label>Arquivo (opcional)<input id="kFile" type="file" accept=".pdf,.doc,.docx,.txt,.xlsx,.xls,.csv,image/*"></label>
+ <div class="help">Na versão real, o arquivo será armazenado no Storage do Supabase dentro do projeto escolhido.</div>
+ <div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn orange" onclick="saveKnowledge('${editId||""}')">${k?"Salvar alterações":"Adicionar"}</button></div>
+ </div>`);
+}
+function saveKnowledge(id){
+ const title=document.getElementById("kTitle").value.trim();if(!title)return toast("Digite o título.");
+ const project=document.getElementById("kUni").value;
+ const file=document.getElementById("kFile")?.files?.[0];
+ const old=id?state.knowledge.find(x=>x.id===id):null;
+ const finish=(fileData=null)=>{const obj={id:id||uid("k"),title,type:document.getElementById("kType").value,project,universe:project,source:document.getElementById("kSource").value||file?.name||"Fonte não informada",fileName:file?.name||old?.fileName||"",fileData:fileData||old?.fileData||"",approved:old?.approved??true};if(id)state.knowledge=state.knowledge.map(x=>x.id===id?obj:x);else state.knowledge.push(obj);closeModal();save();toast(id?"Memória atualizada":"Conhecimento adicionado");};
+ if(file){const reader=new FileReader();reader.onload=()=>finish(reader.result);reader.readAsDataURL(file)}else finish();
+}
+function deleteKnowledge(id){if(!confirm("Excluir esta memória/conhecimento?"))return;state.knowledge=state.knowledge.filter(x=>x.id!==id);save();toast("Item excluído")}
+function setKnowledgeType(type){knowledgeTypeFilter=type;renderKnowledge()}
+function renderKnowledge(){
+ const q=(document.getElementById("knowledgeSearch")?.value||"").toLowerCase();
+ const pf=document.getElementById("knowledgeProject");
+ if(pf)pf.innerHTML=`<option value="Todos">Todos os projetos</option>`+state.universes.map(u=>`<option>${esc(u.name)}</option>`).join("");
+ const selected=window.selectedKnowledgeProject||"Todos";if(pf)pf.value=selected;
+ const project=pf?.value||"Todos";
+ window.selectedKnowledgeProject=project;
+ let a=state.knowledge.filter(k=>(k.title+k.type+(k.project||k.universe)+k.source).toLowerCase().includes(q)&&(project==="Todos"||(k.project||k.universe)===project)&&(knowledgeTypeFilter==="Todos"||k.type===knowledgeTypeFilter));
+ document.getElementById("knowledgeCount").textContent=a.length+" itens";
+ document.getElementById("knowledgeList").innerHTML=a.length?a.map(k=>`<div class="item"><div class="sectionhead" style="margin:0 0 5px"><strong>${esc(k.title)}</strong><span class="badge">${esc(k.project||k.universe)}</span></div><small>${esc(k.type)} • ${esc(k.source)}${k.fileName?" • 📎 "+esc(k.fileName):""} • ${k.approved?"APROVADO":"PENDENTE"}</small><div class="actions"><button class="btn small" onclick="openKnowledge('${k.id}')">Editar</button><button class="btn small danger" onclick="deleteKnowledge('${k.id}')">Excluir</button></div></div>`).join(""):`<div class="empty">Nenhum conhecimento encontrado para este projeto.</div>`;
+}
+function openPauta(){
+ openModal("Nova pauta",`<div class="form"><label>Tema / pauta<input id="pTopic" placeholder="Ex.: O ciclo da água"></label><label>Universo<select id="pUni">${state.universes.map(u=>`<option>${esc(u.name)}</option>`).join("")}</select></label><label>Público / faixa etária<input id="pAudience" placeholder="Ex.: 5–7 anos"></label><label>Objetivo<textarea id="pObjective" placeholder="O que essa pauta precisa ensinar, contar ou provocar?"></textarea></label><div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn orange" onclick="createPackage()">Criar pacote</button></div></div>`)
+}
+const outputTemplate=["Livro","Música","Vídeo principal","5 Shorts","3 Reels","Atividade imprimível","Produto N33D"];
+function createPackage(){let topic=document.getElementById("pTopic").value.trim();if(!topic)return toast("Digite uma pauta.");let uni=document.getElementById("pUni").value;let p={id:uid("p"),code:uni.slice(0,3).toUpperCase()+"-"+new Date().getFullYear()+"-"+String(state.packages.length+1).padStart(3,"0"),topic,universe:uni,audience:document.getElementById("pAudience").value||"Não definido",objective:document.getElementById("pObjective").value||"",created:new Date().toISOString(),outputs:outputTemplate.map((name,i)=>({id:uid("o"),name,status:i<1?"REVIEW":i===1?"APPROVED":"PENDING"}))};state.packages.unshift(p);closeModal();save();go("production");toast("Pacote criado com todas as saídas")}
+function statusLabel(s){return {APPROVED:"APROVADO",REVIEW:"EM REVISÃO",GENERATING:"GERANDO",REJECTED:"REPROVADO",PENDING:"PENDENTE"}[s]||s}
+function statusClass(s){return s==="APPROVED"?"green":s==="REVIEW"||s==="GENERATING"?"orangeText":s==="REJECTED"?"red":"yellow"}
+function setOutput(pid,oid,status){let p=state.packages.find(x=>x.id===pid),o=p.outputs.find(x=>x.id===oid);o.status=status;save();toast(statusLabel(status))}
+function generatePackage(pid){let p=state.packages.find(x=>x.id===pid);p.outputs.forEach((o,i)=>{if(o.status==="PENDING")o.status=i===2?"GENERATING":"REVIEW"});save();toast("Ecossistema enviado para produção")}
+function openPackage(pid){let p=state.packages.find(x=>x.id===pid);openModal(p.code,`<div class="sub">${esc(p.topic)} • ${esc(p.universe)} • ${esc(p.audience)}</div><div class="timeline"><div class="step"><b>1. Brief</b><small>Concluído</small></div><div class="step"><b>2. Geração</b><small>Automática</small></div><div class="step"><b>3. Validação</b><small>Consistência + conhecimento</small></div><div class="step"><b>4. Publicação</b><small>Após aprovação</small></div></div><div class="list">${p.outputs.map(o=>`<div class="item"><strong>${esc(o.name)}</strong><small>${statusLabel(o.status)}</small><div class="actions"><button class="btn small" onclick="setOutput('${p.id}','${o.id}','REVIEW');openPackage('${p.id}')">Revisar</button><button class="btn small" onclick="setOutput('${p.id}','${o.id}','APPROVED');openPackage('${p.id}')">Aprovar</button><button class="btn small danger" onclick="setOutput('${p.id}','${o.id}','REJECTED');openPackage('${p.id}')">Reprovar</button></div></div>`).join("")}</div><div class="actions"><button class="btn" onclick="closeModal()">Fechar</button><button class="btn orange" onclick="generatePackage('${p.id}');closeModal()">Gerar pendentes</button></div>`)}
+function deletePackage(id){if(!confirm("Excluir este pacote?"))return;state.packages=state.packages.filter(x=>x.id!==id);save();toast("Pacote excluído")}
+
+function openProduct(){openModal("Novo produto",`<div class="form"><label>Nome<input id="prodName" placeholder="Ex.: Kit Sistema Solar"></label><label>Tipo<select id="prodType"><option>Livro</option><option>Ebook</option><option>Atividade</option><option>Música</option><option>Produto físico</option><option>Outro</option></select></label><label>Pacote vinculado<select id="prodPack"><option value="">Nenhum</option>${state.packages.map(p=>`<option value="${p.id}">${esc(p.code)} • ${esc(p.topic)}</option>`).join("")}</select></label><div class="actions"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn orange" onclick="saveProduct()">Criar produto</button></div></div>`)}
+function saveProduct(){let n=document.getElementById("prodName").value.trim();if(!n)return toast("Digite o nome.");state.products.push({id:uid("pr"),name:n,type:document.getElementById("prodType").value,packageId:document.getElementById("prodPack").value});closeModal();save();toast("Produto criado")}
+
+function renderAll(){
+ document.getElementById("mUniverses").textContent=state.universes.length;
+ document.getElementById("mPackages").textContent=state.packages.length;
+ document.getElementById("mAssets").textContent=state.packages.reduce((a,p)=>a+p.outputs.length,0);
+ document.getElementById("mApproval").textContent=state.packages.reduce((a,p)=>a+p.outputs.filter(o=>o.status==="REVIEW").length,0);
+ document.getElementById("dashUniverses").innerHTML=state.universes.slice(0,3).map(universeCard).join("")||'<div class="empty">Crie seu primeiro universo.</div>';
+ let q=state.packages.slice(0,5).flatMap(p=>p.outputs.slice(0,2).map(o=>({p,o})));document.getElementById("dashQueue").innerHTML=q.length?q.map(x=>`<div class="row"><b>${esc(x.p.code)} • ${esc(x.p.topic)}</b><span>${esc(x.o.name)}</span><span class="status ${statusClass(x.o.status)}">${statusLabel(x.o.status)}</span><button class="btn small" onclick="openPackage('${x.p.id}')">Abrir</button></div>`).join(""):'<div class="empty">A fila está vazia. Crie uma pauta para começar.</div>';
+ document.getElementById("universeList").innerHTML=state.universes.map(universeCard).join("")||'<div class="empty">Nenhum universo.</div>';
+ document.getElementById("characterList").innerHTML=state.characters.map(c=>{const first=Object.values(c.refs||{})[0];return `<div class="card char"><div class="avatar">${first?`<img src="${first}" alt="">`:esc(c.icon||"🧑")}</div><div class="charbody"><h3>${esc(c.name)}</h3><div class="sub"><b>${esc(c.universe)}</b> • ${esc(c.desc)}</div><div class="lock">${c.locked?"● REFERÊNCIA BLOQUEADA":"○ REFERÊNCIA EDITÁVEL"}</div><div class="refcount">${Object.keys(c.refs||{}).length} referência(s) visual(is) cadastrada(s)</div><div class="actions"><button class="btn small" onclick="openCharacter('${c.id}')">Editar</button><button class="btn small" onclick="toggleLock('${c.id}')">${c.locked?"Desbloquear":"Bloquear"}</button></div></div></div>`}).join("");
+ renderKnowledge();renderPackages();renderProducts();renderAnalytics();
+}
+function universeCard(u){return `<div class="card project"><div><div class="projecthead"><span class="badge">ATIVO</span><span>${esc(u.icon)}</span></div><h3 style="margin-top:14px">${esc(u.name)}</h3><p class="sub">${esc(u.desc)}</p></div><div><div class="bar"><i style="width:${u.progress}%"></i></div><div class="meta"><span>Pipeline</span><b>${u.progress}%</b></div><div class="actions"><button class="btn small" onclick="openUniverse('${u.id}')">Editar</button><button class="btn small danger" onclick="deleteUniverse('${u.id}')">Arquivar</button></div></div></div>`}
+function renderPackages(){let el=document.getElementById("packageList");if(!state.packages.length){el.innerHTML='<div class="empty">Nenhum pacote criado ainda.<br><br><button class="btn orange" onclick="openPauta()">Criar primeira pauta</button></div>';return}el.innerHTML=state.packages.map(p=>{let done=p.outputs.filter(o=>o.status==="APPROVED").length;return `<div class="card" style="margin-bottom:12px"><div class="top" style="margin:0"><div><span class="badge">${esc(p.code)}</span><h2 style="margin-top:8px">${esc(p.topic)}</h2><div class="sub">${esc(p.universe)} • ${esc(p.audience)}</div></div><div><button class="btn small" onclick="openPackage('${p.id}')">Abrir pacote</button> <button class="btn small danger" onclick="deletePackage('${p.id}')">Excluir</button></div></div><div class="bar"><i style="width:${Math.round(done/p.outputs.length*100)}%"></i></div><div class="meta"><span>${done}/${p.outputs.length} saídas aprovadas</span><button class="link" onclick="generatePackage('${p.id}')">Gerar pendentes →</button></div></div>`}).join("")}
+function renderProducts(){document.getElementById("productList").innerHTML=state.products.length?state.products.map(p=>`<div class="card project"><div><span class="badge">${esc(p.type)}</span><h3 style="margin-top:13px">${esc(p.name)}</h3><p class="sub">${p.packageId?(state.packages.find(x=>x.id===p.packageId)?.code||"Pacote removido"):"Sem pacote vinculado"}</p></div><div class="meta"><span>Produto</span><b>ATIVO</b></div></div>`).join(""):'<div class="empty">Nenhum produto criado.</div>'}
+function renderAnalytics(){let total=state.packages.reduce((a,p)=>a+p.outputs.length,0),approved=state.packages.reduce((a,p)=>a+p.outputs.filter(o=>o.status==="APPROVED").length,0);document.getElementById("aDone").textContent=state.packages.filter(p=>p.outputs.every(o=>o.status==="APPROVED")).length;document.getElementById("aApproved").textContent=approved;document.getElementById("aProducts").textContent=state.products.length;document.getElementById("aRate").textContent=total?Math.round(approved/total*100)+"%":"0%"}
+function saveSettings(){localStorage.setItem("create_name",document.getElementById("settingName").value);localStorage.setItem("create_rule",document.getElementById("settingRule").value);toast("Configurações salvas")}
+
+renderAll();
+</script>
+</body>
+</html>
